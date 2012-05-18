@@ -19,55 +19,14 @@
 @synthesize programStack = _programStack;
 
 
-- (NSMutableArray *) operandStack
-{
-	if (!_programStack) {
-		_programStack = [[NSMutableArray alloc] init];
-	}
-	return _programStack;
-}
-
-
-- (void) pushOperand:(double)operand {
-	[self.programStack addObject:[NSNumber numberWithDouble:operand]];
-}
-
-
-/* Make it call runProgram to make it backward compatible.
- * Nice maintainance structure.
- */
-- (double) performOperation:(NSString *)operation {
-	
-	[self.programStack addObject:operation];
-	return [CalculatorBrain runProgram:self.program];
-}
-
-
-/* Getter function for program.
- * Use the internal state programStack.
- * But don't want the internal state to be open to public methods, so only use a snapshot of that.
- * And the copy is an immutable array, so you can't change it.
- */
-- (id)program
-{
-	return [self.programStack copy];
-}
-
-
-
-+ (NSString *)descriptionOfProgram:(id)program
-{
-	return @"Implement this in Assignment 2";
-}
-
-
 
 + (double) popOperandOffStack:(NSMutableArray *)stack
 {
 	double result = 0;
 	
 	id topOfStack = [stack lastObject];
-	if (topOfStack) [stack removeLastObject];
+	if (topOfStack) 
+		[stack removeLastObject];
 	
 	if ([topOfStack isKindOfClass:[NSNumber class]]) {
 		result = [topOfStack doubleValue];
@@ -114,6 +73,41 @@
 		stack = [program mutableCopy];//statically typed
 	}
 	return [self popOperandOffStack:stack];//This should also be a class method.
+}
+
+
+
+- (NSMutableArray *) programStack
+{
+	if (!_programStack) {
+		_programStack = [[NSMutableArray alloc] init];
+	}
+	return _programStack;
+}
+
+
+- (void) pushOperand:(double)operand {
+	[self.programStack addObject:[NSNumber numberWithDouble:operand]];
+}
+
+
+- (id)program
+{
+	return [self.programStack copy];
+}
+
+
+- (double) performOperation:(NSString *)operation {
+	
+	[self.programStack addObject:operation];
+	return [CalculatorBrain runProgram:self.program];
+}
+
+
+
++ (NSString *)descriptionOfProgram:(id)program
+{
+	return @"Implement this in Assignment 2";
 }
 	
 
