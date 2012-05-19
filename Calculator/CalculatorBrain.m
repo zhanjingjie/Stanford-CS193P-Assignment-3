@@ -12,12 +12,57 @@
 
 @interface CalculatorBrain()
 @property (nonatomic, strong) NSMutableArray *programStack;
+@property (nonatomic, strong) NSSet *operationSet;
 @end
 
 
 @implementation CalculatorBrain
 @synthesize programStack = _programStack;
+@synthesize operationSet = _operationSet;
 
+// Getter
+///////////////////////////////////////////////
+
+- (id)program
+{
+	return [self.programStack copy];
+}
+
+
+- (NSMutableArray *) programStack
+{
+	if (!_programStack) {
+		_programStack = [[NSMutableArray alloc] init];
+	}
+	return _programStack;
+}
+
+- (NSSet *) operationSet
+{
+	if (!_operationSet) {
+		_operationSet = [NSSet setWithObjects:@"+", @"-", @"*", @"/", @"sin", @"cos", @"tan", @"Pi", @"sqrt", nil];
+	}
+	return _operationSet;
+	
+}
+///////////////////////////////////////////////
+
+
+- (void) pushOperand:(double)operand {
+	[self.programStack addObject:[NSNumber numberWithDouble:operand]];
+}
+
+
+- (double) performOperation:(NSString *)operation {
+	
+	[self.programStack addObject:operation];
+	return [CalculatorBrain runProgram:self.program];
+}
+
+
+- (void) clearOperation {
+	[self.programStack removeAllObjects];
+}
 
 
 + (double) popOperandOffStack:(NSMutableArray *)stack
@@ -62,10 +107,7 @@
 	return result;
 }
 
-/* It's only be called when performOperation is called.
- * So it won't return some random operand value here.
- * Only the calculation result.
- */
+
 + (double)runProgram:(id)program
 {
 	NSMutableArray *stack;
@@ -76,32 +118,21 @@
 }
 
 
-
-- (NSMutableArray *) programStack
++ (NSSet *)variablesUsedInProgram:(id)program 
 {
-	if (!_programStack) {
-		_programStack = [[NSMutableArray alloc] init];
+	NSMutableSet *variableSet;
+	for (id content in program) {
+		if ([content isKindOfClass:[NSString class]] && ![variableSet member:content]) {
+			if (!variableSet) {
+				[variableSet setByAddingObject:content];
+			} else {
+				[variableSet addObject:content];
+			}
+		}
 	}
-	return _programStack;
+	return variableSet;
 }
 
-
-- (void) pushOperand:(double)operand {
-	[self.programStack addObject:[NSNumber numberWithDouble:operand]];
-}
-
-
-- (id)program
-{
-	return [self.programStack copy];
-}
-
-
-- (double) performOperation:(NSString *)operation {
-	
-	[self.programStack addObject:operation];
-	return [CalculatorBrain runProgram:self.program];
-}
 
 
 
@@ -109,11 +140,10 @@
 {
 	return @"Implement this in Assignment 2";
 }
-	
 
-- (void) clearOperation {
-	[self.programStack removeAllObjects];
-}
+
+
+
 
 
 @end

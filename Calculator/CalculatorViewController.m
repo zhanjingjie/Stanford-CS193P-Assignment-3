@@ -49,6 +49,11 @@
 	}
 }
 
+
+- (IBAction)variablePressed:(UIButton *)sender {
+	
+}
+
 /* When enter key is pressed, push the operand on the screen to the stack.*/
 - (IBAction)enterPressed {
 	[self.brain pushOperand:[self.display.text doubleValue]];
