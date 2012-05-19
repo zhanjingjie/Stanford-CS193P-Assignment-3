@@ -12,6 +12,7 @@
 @interface CalculatorViewController()
 @property (nonatomic) BOOL userIsInTheMiddleOfEnteringANumber;
 @property (nonatomic, strong) CalculatorBrain *brain;
+@property (nonatomic, strong) NSDictionary *variableValues;
 @end
 
 
@@ -22,6 +23,7 @@
 @synthesize displayEquation = _displayEquation;
 @synthesize userIsInTheMiddleOfEnteringANumber = _userIsInTheMiddleOfEnteringANumber;
 @synthesize brain = _brain;
+@synthesize variableValues = _variableValues;//the dictionary to hold the value of variables.
 
 /* Getter method for the brain. Lazy evaluation.*/
 - (CalculatorBrain *) brain
@@ -66,7 +68,8 @@
 		[self enterPressed];
 	}
 	NSString *operation = [sender currentTitle];
-	double result = [self.brain performOperation:operation];
+	double result = [self.brain performOperation:operation 
+							 usingVariableValues:self.variableValues];//Add another argument here
 	self.display.text = [NSString stringWithFormat:@"%g", result];
 	self.displayEquation.text = [self.displayEquation.text stringByAppendingFormat:@"%s%@", "  ", operation];
 }

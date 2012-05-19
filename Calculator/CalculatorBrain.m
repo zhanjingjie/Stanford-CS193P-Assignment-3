@@ -38,30 +38,33 @@
 ///////////////////////////////////////////////
 
 
-- (void) pushOperand:(double)operand {
+- (void) pushOperand:(double)operand 
+{
 	[self.programStack addObject:[NSNumber numberWithDouble:operand]];
 }
 
 
-- (double) performOperation:(NSString *)operation {
-	
-	[self.programStack addObject:operation];
-	return [CalculatorBrain runProgram:self.program];
-}
 
 
-- (void) clearOperation {
+- (void) clearOperation 
+{
 	[self.programStack removeAllObjects];
 }
 
 
-+ (BOOL)isOperation:(NSString *)operation {
-	NSSet *operationSet = [NSSet setWithObjects:@"+", @"-", @"*", @"/", @"sin", @"cos", @"tan", @"Pi", @"sqrt", nil];
++ (BOOL)isOperation:(NSString *)operation 
+{
+	static NSSet *operationSet;
+	if (!operationSet)
+		operationSet = [NSSet setWithObjects:@"+", @"-", @"*", @"/", @"sin", @"cos", @"tan", @"Pi", @"sqrt", nil];
 	return [operationSet containsObject:operation];
 }
 
 
+/* This method should be shared no matter there is variable or not.
+ */
 + (double) popOperandOffStack:(NSMutableArray *)stack
+		  usingVariableValues:(NSDictionary *)variableValues
 {
 	double result = 0;
 	
@@ -71,46 +74,62 @@
 	
 	if ([topOfStack isKindOfClass:[NSNumber class]]) {
 		result = [topOfStack doubleValue];
-	} 
-	
-	else if ([topOfStack isKindOfClass:[NSString class]]) {
+	} else if ([topOfStack isKindOfClass:[NSString class]]) {
 		NSString *operation = topOfStack;
-		
 		if ([operation isEqualToString:@"+"]) {
-			result = [self popOperandOffStack:stack] + [self popOperandOffStack:stack];
+			result = 
+			[self popOperandOffStack:stack usingVariableValues:variableValues] + 
+			[self popOperandOffStack:stack usingVariableValues:variableValues];
 		} else if ([@"*" isEqualToString:operation]) {
-			result = [self popOperandOffStack:stack] * [self popOperandOffStack:stack];
+			result = 
+			[self popOperandOffStack:stack usingVariableValues:variableValues] * 
+			[self popOperandOffStack:stack usingVariableValues:variableValues];
 		} else if ([operation isEqualToString:@"-"]) {
-			double subtrahend = [self popOperandOffStack:stack];
-			result = [self popOperandOffStack:stack] - subtrahend;
+			double subtrahend = 
+			[self popOperandOffStack:stack usingVariableValues:variableValues];
+			result = [self popOperandOffStack:stack usingVariableValues:variableValues] - subtrahend;
 		} else if ([operation isEqualToString:@"/"]) {
-			double divisor = [self popOperandOffStack:stack];
+			double divisor = 
+			[self popOperandOffStack:stack usingVariableValues:variableValues];
 			if (divisor) 
-				result = [self popOperandOffStack:stack] / divisor;
+				result = [self popOperandOffStack:stack usingVariableValues:variableValues] / divisor;
 		} else if ([operation isEqualToString:@"sin"]) {//sin function
-			result = sin([self popOperandOffStack:stack]);
+			result = sin([self popOperandOffStack:stack usingVariableValues:variableValues]);
 		} else if ([operation isEqualToString:@"cos"]) {//cos function
-			result = cos([self popOperandOffStack:stack]);
+			result = cos([self popOperandOffStack:stack usingVariableValues:variableValues]);
 		} else if ([operation isEqualToString:@"tan"]) {//tan function
-			result = tan([self popOperandOffStack:stack]);
+			result = tan([self popOperandOffStack:stack usingVariableValues:variableValues]);
 		} else if ([operation isEqualToString:@"sqrt"]) {//sqrt function
-			result = sqrt([self popOperandOffStack:stack]);
+			result = sqrt([self popOperandOffStack:stack usingVariableValues:variableValues]);
 		} else if ([operation isEqualToString:@"Pi"]) {//Pi function
-			//[self pushOperand:M_PI];
 			result = M_PI;
 		}
+	} else {//Now it must be a variable
+		NSString *variable = topOfStack;
+		NSNumber *value = [variableValues objectForKey:variable];
+		if (value)
+			result = [value doubleValue];
 	}
 	return result;
 }
 
 
 + (double)runProgram:(id)program
+ usingVariableValues:(NSDictionary *)variableValues;
 {
 	NSMutableArray *stack;
 	if ([program isKindOfClass:[NSArray class]]) {//check if my program is still an array
 		stack = [program mutableCopy];//statically typed
 	}
-	return [self popOperandOffStack:stack];//This should also be a class method.
+	return [self popOperandOffStack:stack
+				usingVariableValues:(NSDictionary *)variableValues];
+}
+
+- (double) performOperation:(NSString *)operation 
+		usingVariableValues: (NSDictionary *) variableValues {
+	[self.programStack addObject:operation];
+	return [CalculatorBrain runProgram:self.program
+				   usingVariableValues:variableValues];
 }
 
 
@@ -126,7 +145,7 @@
 			}
 		}
 	}
-	return variableSet;
+	return [variableSet copy];//use a copy of the variableSet
 }
 
 
