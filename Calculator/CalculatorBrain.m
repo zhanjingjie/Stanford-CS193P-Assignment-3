@@ -17,7 +17,6 @@
 
 @implementation CalculatorBrain
 @synthesize programStack = _programStack;
-@synthesize operationSet = _operationSet;
 
 // Getter
 ///////////////////////////////////////////////
@@ -36,14 +35,6 @@
 	return _programStack;
 }
 
-+ (NSSet *) operationSet
-{
-	if (!_operationSet) {
-		_operationSet = [NSSet setWithObjects:@"+", @"-", @"*", @"/", @"sin", @"cos", @"tan", @"Pi", @"sqrt", nil];
-	}
-	return _operationSet;
-	
-}
 ///////////////////////////////////////////////
 
 
@@ -61,6 +52,12 @@
 
 - (void) clearOperation {
 	[self.programStack removeAllObjects];
+}
+
+
++ (BOOL)isOperation:(NSString *)operation {
+	NSSet *operationSet = [NSSet setWithObjects:@"+", @"-", @"*", @"/", @"sin", @"cos", @"tan", @"Pi", @"sqrt", nil];
+	return [operationSet containsObject:operation];
 }
 
 
@@ -121,7 +118,7 @@
 {
 	NSMutableSet *variableSet;
 	for (id content in program) {
-		if ([content isKindOfClass:[NSString class]] && ![self.operationSet member:content]) {
+		if ([content isKindOfClass:[NSString class]] && ![CalculatorBrain isOperation:content]) {
 			if (!variableSet) {
 				[variableSet setByAddingObject:content];//Yea, lazy evaluation
 			} else {
