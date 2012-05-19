@@ -11,6 +11,8 @@
 @interface CalculatorBrain : NSObject
 
 @property (readonly) id program;
+@property (nonatomic, strong) NSSet *operationSet;
+
 
 - (void) pushOperand:(double)operand;
 - (double) performOperation:(NSString *)operation;

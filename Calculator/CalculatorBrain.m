@@ -12,7 +12,6 @@
 
 @interface CalculatorBrain()
 @property (nonatomic, strong) NSMutableArray *programStack;
-@property (nonatomic, strong) NSSet *operationSet;
 @end
 
 
@@ -37,7 +36,7 @@
 	return _programStack;
 }
 
-- (NSSet *) operationSet
++ (NSSet *) operationSet
 {
 	if (!_operationSet) {
 		_operationSet = [NSSet setWithObjects:@"+", @"-", @"*", @"/", @"sin", @"cos", @"tan", @"Pi", @"sqrt", nil];
@@ -122,9 +121,9 @@
 {
 	NSMutableSet *variableSet;
 	for (id content in program) {
-		if ([content isKindOfClass:[NSString class]] && ![variableSet member:content]) {
+		if ([content isKindOfClass:[NSString class]] && ![self.operationSet member:content]) {
 			if (!variableSet) {
-				[variableSet setByAddingObject:content];
+				[variableSet setByAddingObject:content];//Yea, lazy evaluation
 			} else {
 				[variableSet addObject:content];
 			}
