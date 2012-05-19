@@ -61,10 +61,9 @@
 }
 
 
-/* This method should be shared no matter there is variable or not.
+/* No change in this method.
  */
 + (double) popOperandOffStack:(NSMutableArray *)stack
-		  usingVariableValues:(NSDictionary *)variableValues
 {
 	double result = 0;
 	
@@ -77,38 +76,26 @@
 	} else if ([topOfStack isKindOfClass:[NSString class]]) {
 		NSString *operation = topOfStack;
 		if ([operation isEqualToString:@"+"]) {
-			result = 
-			[self popOperandOffStack:stack usingVariableValues:variableValues] + 
-			[self popOperandOffStack:stack usingVariableValues:variableValues];
+			result = [self popOperandOffStack:stack] + [self popOperandOffStack:stack];
 		} else if ([@"*" isEqualToString:operation]) {
-			result = 
-			[self popOperandOffStack:stack usingVariableValues:variableValues] * 
-			[self popOperandOffStack:stack usingVariableValues:variableValues];
+			result = [self popOperandOffStack:stack] * [self popOperandOffStack:stack];
 		} else if ([operation isEqualToString:@"-"]) {
-			double subtrahend = 
-			[self popOperandOffStack:stack usingVariableValues:variableValues];
-			result = [self popOperandOffStack:stack usingVariableValues:variableValues] - subtrahend;
+			double subtrahend = [self popOperandOffStack:stack];
+			result = [self popOperandOffStack:stack] - subtrahend;
 		} else if ([operation isEqualToString:@"/"]) {
-			double divisor = 
-			[self popOperandOffStack:stack usingVariableValues:variableValues];
-			if (divisor) 
-				result = [self popOperandOffStack:stack usingVariableValues:variableValues] / divisor;
+			double divisor = [self popOperandOffStack:stack];
+			if (divisor) result = [self popOperandOffStack:stack] / divisor;
 		} else if ([operation isEqualToString:@"sin"]) {//sin function
-			result = sin([self popOperandOffStack:stack usingVariableValues:variableValues]);
+			result = sin([self popOperandOffStack:stack]);
 		} else if ([operation isEqualToString:@"cos"]) {//cos function
-			result = cos([self popOperandOffStack:stack usingVariableValues:variableValues]);
+			result = cos([self popOperandOffStack:stack]);
 		} else if ([operation isEqualToString:@"tan"]) {//tan function
-			result = tan([self popOperandOffStack:stack usingVariableValues:variableValues]);
+			result = tan([self popOperandOffStack:stack]);
 		} else if ([operation isEqualToString:@"sqrt"]) {//sqrt function
-			result = sqrt([self popOperandOffStack:stack usingVariableValues:variableValues]);
+			result = sqrt([self popOperandOffStack:stack]);
 		} else if ([operation isEqualToString:@"Pi"]) {//Pi function
 			result = M_PI;
 		}
-	} else {//Now it must be a variable
-		NSString *variable = topOfStack;
-		NSNumber *value = [variableValues objectForKey:variable];
-		if (value)
-			result = [value doubleValue];
 	}
 	return result;
 }
@@ -121,8 +108,14 @@
 	if ([program isKindOfClass:[NSArray class]]) {//check if my program is still an array
 		stack = [program mutableCopy];//statically typed
 	}
-	return [self popOperandOffStack:stack
-				usingVariableValues:(NSDictionary *)variableValues];
+	
+	NSUInteger index = 0;
+	for (id operand in stack) {
+		if (![operand isKindOfClass:[NSNumber class]] && [CalculatorBrain isOperation:operand])
+			[stack replaceObjectAtIndex:index withObject:[variableValues objectForKey:operand]];
+		index++;
+	}
+	return [self popOperandOffStack:stack];
 }
 
 - (double) performOperation:(NSString *)operation 
