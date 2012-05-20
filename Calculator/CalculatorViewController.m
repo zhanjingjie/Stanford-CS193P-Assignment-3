@@ -52,11 +52,12 @@
 
 - (IBAction)variablePressed:(UIButton *)sender {
 	self.display.text = [sender currentTitle];
+	[self.brain pushOperand:self.display.text];
 }
 
 /* When enter key is pressed, push the operand on the screen to the stack.*/
 - (IBAction)enterPressed {
-	[self.brain pushOperand:self.display.text]; //A string, can be a number or variable
+	if ([self.display.text doubleValue]) [self.brain pushOperand:self.display.text]; 	
 	self.userIsInTheMiddleOfEnteringANumber = NO;
 	self.displayEquation.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
 }
@@ -67,7 +68,8 @@
 		[self enterPressed];
 	}
 	NSString *operation = [sender currentTitle];
-	double result = [self.brain performOperation:operation 
+	[self.brain pushOperand:operation];
+	double result = [CalculatorBrain runProgram:self.brain.program
 							 usingVariableValues:self.variableValues];//Add another argument here
 	self.display.text = [NSString stringWithFormat:@"%g", result];
 	self.displayEquation.text = [CalculatorBrain descriptionOfProgram:self.brain.program];

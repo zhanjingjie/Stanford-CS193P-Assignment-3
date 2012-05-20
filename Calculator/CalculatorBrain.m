@@ -147,13 +147,6 @@
 	return [self popOperandOffStack:stack];
 }
 
-- (double) performOperation:(NSString *)operation 
-		usingVariableValues: (NSDictionary *) variableValues {
-	[self.programStack addObject:operation];
-	return [CalculatorBrain runProgram:self.program
-				   usingVariableValues:variableValues];
-}
-
 
 + (NSSet *)variablesUsedInProgram:(id)program 
 {
