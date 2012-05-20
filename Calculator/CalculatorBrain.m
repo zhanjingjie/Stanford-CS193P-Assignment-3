@@ -135,15 +135,14 @@
 		stack = [program mutableCopy];//statically typed
 	}
 	
-	NSUInteger index = 0;
-	for (id operand in stack) {
-		if (![operand isKindOfClass:[NSNumber class]] && ![CalculatorBrain isOperation:operand]) {
-			NSNumber *value = [NSNumber numberWithDouble:0.0];
-			if (![variableValues objectForKey:operand]) 
+	for (int index = 0; index < [stack count]; index++) {
+		id operand = [stack objectAtIndex:index];
+		if ((![operand isKindOfClass:[NSNumber class]]) && (![CalculatorBrain isOperation:operand])) {
+			NSNumber *value = [NSNumber numberWithDouble:0];
+			if ([variableValues objectForKey:operand]) 
 				value = [variableValues objectForKey:operand];
 			[stack replaceObjectAtIndex:index withObject:value];
 		}
-		index++;
 	}
 	return [self popOperandOffStack:stack];
 }
