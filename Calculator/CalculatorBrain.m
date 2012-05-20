@@ -23,7 +23,7 @@
 
 - (id)program
 {
-	return [self.programStack copy];
+	return [self.programStack copy]; //it's just a copy, so nothing will change the programStack, only the clearOperation
 }
 
 
@@ -52,13 +52,34 @@
 }
 
 
+
++ (BOOL)isTwoOperandOperation:(NSString *)operation
+{
+	static NSSet *twoOperationSet;
+	if (!twoOperationSet) twoOperationSet = [NSSet setWithObjects:@"+", @"-", @"*", @"/", nil];
+	return [twoOperationSet containsObject:operation];
+}
+
++ (BOOL)isOneOperandOperation:(NSString *)operation
+{
+	static NSSet *oneOperationSet;
+	if (!oneOperationSet) oneOperationSet = [NSSet setWithObjects:@"sin", @"cos", @"tan", @"sqrt", nil];
+	return [oneOperationSet containsObject:operation];
+}
+
++ (BOOL)isNoOperandOperation:(NSString *)operation
+{
+	return [operation isEqualToString:@"Pi"];
+}
+
 + (BOOL)isOperation:(NSString *)operation 
 {
-	static NSSet *operationSet;
-	if (!operationSet)
-		operationSet = [NSSet setWithObjects:@"+", @"-", @"*", @"/", @"sin", @"cos", @"tan", @"Pi", @"sqrt", nil];
-	return [operationSet containsObject:operation];
+	return [self isTwoOperandOperation:operation]
+	|| [self isOneOperandOperation:operation]
+	|| [self isNoOperandOperation:operation];
 }
+
+
 
 
 /* No change in this method.
@@ -68,8 +89,7 @@
 	double result = 0;
 	
 	id topOfStack = [stack lastObject];
-	if (topOfStack) 
-		[stack removeLastObject];
+	if (topOfStack) [stack removeLastObject];
 	
 	if ([topOfStack isKindOfClass:[NSNumber class]]) {
 		result = [topOfStack doubleValue];
@@ -111,7 +131,7 @@
 	
 	NSUInteger index = 0;
 	for (id operand in stack) {
-		if (![operand isKindOfClass:[NSNumber class]] && [CalculatorBrain isOperation:operand])
+		if (![operand isKindOfClass:[NSNumber class]] && ![CalculatorBrain isOperation:operand])
 			[stack replaceObjectAtIndex:index withObject:[variableValues objectForKey:operand]];
 		index++;
 	}
@@ -142,11 +162,36 @@
 }
 
 
++ (NSString *)descriptionOfTopOfStack:(NSMutableArray *)stack 
+{
+	NSString *description;
+	id topOfStack = [stack lastObject];
+	if (topOfStack) [stack removeLastObject];
+	if ([topOfStack isKindOfClass:[NSNumber class]]) {
+		description = [topOfStack stringValue];
+	} else if ([topOfStack isKindOfClass:[NSString class]]) {
+		NSString *operationOrVar = topOfStack;
+		if (![self isOperation:operationOrVar] || [self isNoOperandOperation:operationOrVar]) {
+			description = operationOrVar;
+		} else if ([self isOneOperandOperation:operationOrVar]) {
+			description = [NSString stringWithFormat:@"%@(%@)",operationOrVar, [self descriptionOfTopOfStack:stack]];
+		} else if ([self isTwoOperandOperation:operationOrVar]) {
+			NSString *secondOperand = [self descriptionOfTopOfStack:stack];
+			description = [NSString stringWithFormat:@"%@ %@ %@", [self descriptionOfTopOfStack:stack], operationOrVar, secondOperand];
+		}
+	}
+	return description;
+}
+
 
 
 + (NSString *)descriptionOfProgram:(id)program
 {
-	return @"Implement this in Assignment 2";
+	NSMutableArray *stack;
+	if ([program isKindOfClass:[NSArray class]]) {//check if my program is still an array
+		stack = [program mutableCopy];//statically typed
+	}
+	return [self descriptionOfTopOfStack:stack];
 }
 
 
