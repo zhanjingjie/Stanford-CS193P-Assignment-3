@@ -12,11 +12,13 @@
 
 @interface CalculatorBrain()
 @property (nonatomic, strong) NSMutableArray *programStack;
+@property (nonatomic) NSUInteger *operationCount;
 @end
 
 
 @implementation CalculatorBrain
 @synthesize programStack = _programStack;
+@synthesize operationCount = _operationCount;
 
 // Getter
 ///////////////////////////////////////////////
@@ -177,21 +179,30 @@
 			description = [NSString stringWithFormat:@"%@(%@)",operationOrVar, [self descriptionOfTopOfStack:stack]];
 		} else if ([self isTwoOperandOperation:operationOrVar]) {
 			NSString *secondOperand = [self descriptionOfTopOfStack:stack];
-			description = [NSString stringWithFormat:@"%@ %@ %@", [self descriptionOfTopOfStack:stack], operationOrVar, secondOperand];
+			description = [NSString stringWithFormat:@"(%@ %@ %@)", [self descriptionOfTopOfStack:stack], operationOrVar, secondOperand];
 		}
 	}
 	return description;
 }
 
 
-
+//Add the commas here
 + (NSString *)descriptionOfProgram:(id)program
 {
 	NSMutableArray *stack;
+	NSString *description;
 	if ([program isKindOfClass:[NSArray class]]) {//check if my program is still an array
 		stack = [program mutableCopy];//statically typed
 	}
-	return [self descriptionOfTopOfStack:stack];
+	
+	for ( ; stack; [description stringByAppendingString:@", "]) {
+		if (!description) {
+			description = [self descriptionOfTopOfStack:stack];
+		} else {
+			[description stringByAppendingString:[self descriptionOfTopOfStack:stack]];
+		}
+	}
+	return description;
 }
 
 
