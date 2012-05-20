@@ -137,8 +137,12 @@
 	
 	NSUInteger index = 0;
 	for (id operand in stack) {
-		if (![operand isKindOfClass:[NSNumber class]] && ![CalculatorBrain isOperation:operand])
-			[stack replaceObjectAtIndex:index withObject:[variableValues objectForKey:operand]];
+		if (![operand isKindOfClass:[NSNumber class]] && ![CalculatorBrain isOperation:operand]) {
+			NSNumber *value = [NSNumber numberWithDouble:0.0];
+			if (![variableValues objectForKey:operand]) 
+				value = [variableValues objectForKey:operand];
+			[stack replaceObjectAtIndex:index withObject:value];
+		}
 		index++;
 	}
 	return [self popOperandOffStack:stack];
@@ -190,23 +194,23 @@
 }
 
 
-//Add the commas here
 + (NSString *)descriptionOfProgram:(id)program
 {
 	NSMutableArray *stack;
-	NSString *description;
-	if ([program isKindOfClass:[NSArray class]]) {//check if my program is still an array
-		stack = [program mutableCopy];//statically typed
+	NSMutableString *descriptions;
+	if ([program isKindOfClass:[NSArray class]]) {		
+		stack = [program mutableCopy];
 	}
 	
-	for ( ; stack; [description stringByAppendingString:@", "]) {
-		if (!description) {
-			description = [self descriptionOfTopOfStack:stack];
+	while ([stack count]) {
+		if (!descriptions) {
+			descriptions = [[self descriptionOfTopOfStack:stack] mutableCopy];
 		} else {
-			[description stringByAppendingString:[self descriptionOfTopOfStack:stack]];
+			[descriptions appendString:[self descriptionOfTopOfStack:stack]];
 		}
+		if ([stack count]) [descriptions appendString:@", "];
 	}
-	return description;
+	return [descriptions copy];
 }
 
 
