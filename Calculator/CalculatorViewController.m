@@ -43,23 +43,22 @@
 			return;
 	if (self.userIsInTheMiddleOfEnteringANumber) {
 		self.display.text = [self.display.text stringByAppendingString:digit];
-		self.displayEquation.text = [self.displayEquation.text stringByAppendingFormat:@"%@", digit];
 	} else {
 		self.display.text = digit;
 		self.userIsInTheMiddleOfEnteringANumber = YES;
-		self.displayEquation.text = [self.displayEquation.text stringByAppendingFormat:@"%s%@", "  ", digit];
 	}
 }
 
 
 - (IBAction)variablePressed:(UIButton *)sender {
-	
+	self.display.text = [sender currentTitle];
 }
 
 /* When enter key is pressed, push the operand on the screen to the stack.*/
 - (IBAction)enterPressed {
-	[self.brain pushOperand:[self.display.text doubleValue]];
+	[self.brain pushOperand:self.display.text]; //A string, can be a number or variable
 	self.userIsInTheMiddleOfEnteringANumber = NO;
+	self.displayEquation.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
 }
 
 /* Perform the operation and update the display and displayEquation.*/
@@ -71,7 +70,7 @@
 	double result = [self.brain performOperation:operation 
 							 usingVariableValues:self.variableValues];//Add another argument here
 	self.display.text = [NSString stringWithFormat:@"%g", result];
-	self.displayEquation.text = [self.displayEquation.text stringByAppendingFormat:@"%s%@", "  ", operation];
+	self.displayEquation.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
 }
 
 /*If C is pressed, then two display and userIsInTheMiddleOfEnteringANumber should be reset initial state(done in controller)

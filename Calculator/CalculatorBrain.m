@@ -40,9 +40,13 @@
 ///////////////////////////////////////////////
 
 
-- (void) pushOperand:(double)operand 
+- (void) pushOperand:(NSString *)operand 
 {
-	[self.programStack addObject:[NSNumber numberWithDouble:operand]];
+	if (![operand doubleValue]) {
+		[self.programStack addObject:operand];//Then it must be a variable
+	} else {
+		[self.programStack addObject:[NSNumber numberWithDouble:[operand doubleValue]]];
+	}
 }
 
 
