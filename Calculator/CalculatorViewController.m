@@ -21,6 +21,7 @@
 @implementation CalculatorViewController
 @synthesize display = _display;
 @synthesize displayEquation = _displayEquation;
+@synthesize displayVariableValues = _displayVariableValues;
 @synthesize userIsInTheMiddleOfEnteringANumber = _userIsInTheMiddleOfEnteringANumber;
 @synthesize brain = _brain;
 @synthesize variableValues = _variableValues;//the dictionary to hold the value of variables.
@@ -83,5 +84,22 @@ And the stack in the brain should also be reset(done in model)*/
 	self.displayEquation.text = [NSString stringWithFormat:@"%s", ""];
 	self.userIsInTheMiddleOfEnteringANumber = NO;
 }
+
+
+- (IBAction)testPressed:(UIButton *)sender {
+	NSArray *variableNames = [NSArray arrayWithObjects:@"x", @"y", @"z", nil];
+								  
+	if ([[sender currentTitle] isEqualToString:@"Test1"]) {
+		self.variableValues = nil;
+		self.displayVariableValues.text = @"x = 0, y = 0, z = 0";
+	} else if ([[sender currentTitle] isEqualToString:@"Test2"]) {
+		/*NSArray *test2 = [NSArray arrayWithObjects:
+						  [NSNumber numberWithDouble:1],
+						  [NSNumber numberWithDouble:2], 
+						  [NSNumber numberWithDouble:3], nil];
+		self.variableValues = [self.variableValues initWithObjects:test2 forKeys:variableNames];*/
+	}
+}
+
 
 @end

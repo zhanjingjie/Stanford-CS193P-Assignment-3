@@ -152,7 +152,7 @@
 {
 	NSMutableSet *variableSet;
 	for (id content in program) {
-		if ([content isKindOfClass:[NSString class]] && ![CalculatorBrain isOperation:content]) {
+		if ([content isKindOfClass:[NSString class]] && (![CalculatorBrain isOperation:content])) {
 			if (!variableSet) {
 				[variableSet setByAddingObject:content];//Yea, lazy evaluation
 			} else {
