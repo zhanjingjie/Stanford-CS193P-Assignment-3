@@ -26,9 +26,9 @@
 
 @synthesize userIsInTheMiddleOfEnteringANumber = _userIsInTheMiddleOfEnteringANumber;
 @synthesize brain = _brain;
-@synthesize variableValues = _variableValues;//the dictionary to hold the value of variables.
+@synthesize variableValues = _variableValues;
 
-/* Getter method for the brain. Lazy evaluation.*/
+
 - (CalculatorBrain *) brain
 {
 	if (!_brain)
@@ -36,11 +36,11 @@
 	return _brain;
 }
 
+
 /* Updating display.*/
 - (IBAction)digitPressed:(UIButton *)sender {
 	NSString *digit = [sender currentTitle];
 	
-	//Need to check if it is the decimal point, if it is, check for the correctness
 	if ([digit isEqualToString:@"."] && [self.display.text rangeOfString:@"."].location != NSNotFound)
 		if (self.userIsInTheMiddleOfEnteringANumber)
 			return;
@@ -74,14 +74,14 @@
 }
 
 
-/* Updating display, displayEquation, displayVariable.
+/* Updating display, displayEquation, displayVariableValues.
  * Also updating fields userIsInTheMiddleOfEnteringANumber, and variableValues.
  */
 - (IBAction)clearPressed {
 	[self.brain clearOperation];
 	self.display.text = [NSString stringWithFormat:@"%d", 0];
 	self.displayEquation.text = [NSString stringWithFormat:@"%s", ""];
-	self.displayVariableValues = [NSString stringWithFormat:@"%s", ""];
+	self.displayVariableValues.text = [NSString stringWithFormat:@"%s", ""];
 	self.variableValues = nil;
 	self.userIsInTheMiddleOfEnteringANumber = NO;
 }
@@ -129,7 +129,7 @@
 	self.displayVariableValues.text = [self displayedVariables:variableUsedSet variablesInDictionary:self.variableValues];
 }
 
-
+/* Updating display, displayEquations, displayVariableValues.*/
 - (IBAction)undoPressed {
 	if (self.userIsInTheMiddleOfEnteringANumber) {
 		
