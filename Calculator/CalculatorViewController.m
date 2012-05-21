@@ -89,8 +89,11 @@ And the stack in the brain should also be reset(done in model)*/
 		   variablesInDictionary:(NSDictionary *) aDictionary
 {
 	NSMutableString *displayed = [@"" mutableCopy];
-	for (NSString *var in aSet) //not sure if this can deal with the condition when aSet is nil
-		if ([aDictionary objectForKey:var]) [displayed appendFormat:@"%@ = %@    ", var, [aDictionary objectForKey:var]];	
+	for (NSString *var in aSet) {//not sure if this can deal with the condition when aSet is nil
+		NSNumber *valueInDictionary = [NSNumber numberWithDouble:0];
+		if ([aDictionary objectForKey:var]) valueInDictionary = [aDictionary objectForKey:var];
+		[displayed appendFormat:@"%@ = %@    ", var, valueInDictionary];	
+	}
 	return [displayed copy];
 }
 
@@ -104,21 +107,19 @@ And the stack in the brain should also be reset(done in model)*/
 
 
 - (IBAction)testPressed:(UIButton *)sender {
-	NSArray *variableNames = [NSArray arrayWithObjects:@"x", @"y", @"z", nil];
 	NSSet *variableUsedSet = [CalculatorBrain variablesUsedInProgram:self.brain.program];
-	NSArray *testValues;
+	NSNumber *zero = [NSNumber numberWithDouble:0];
+	NSNumber *five = [NSNumber numberWithDouble:5];
+	NSNumber *nagetiveTwo = [NSNumber numberWithDouble:-2];
 								  
 	if ([[sender currentTitle] isEqualToString:@"Test1"]) {
 		self.variableValues = nil;
-	} else {
-		if ([[sender currentTitle] isEqualToString:@"Test2"]) {
-			testValues = [NSArray arrayWithObjects: [NSNumber numberWithDouble:1], [NSNumber numberWithDouble:2], [NSNumber numberWithDouble:3], nil];
-		} else if ([[sender currentTitle] isEqualToString:@"Test3"]) {
-			testValues = [NSArray arrayWithObjects: [NSNumber numberWithDouble:4], [NSNumber numberWithDouble:5], [NSNumber numberWithDouble:6], nil];
-		} else if ([[sender currentTitle] isEqualToString:@"Test4"]) {
-			testValues = [NSArray arrayWithObjects: [NSNumber numberWithDouble:7], [NSNumber numberWithDouble:8], [NSNumber numberWithDouble:9], nil];
-		}
-		self.variableValues = [NSDictionary dictionaryWithObjects:testValues forKeys:variableNames];
+	} else if ([[sender currentTitle] isEqualToString:@"Test2"]) {
+		self.variableValues = [NSDictionary dictionaryWithObjectsAndKeys:zero, @"x", zero, @"y", zero, @"z", nil];
+	} else if ([[sender currentTitle] isEqualToString:@"Test3"]) {
+		self.variableValues = [NSDictionary dictionaryWithObjectsAndKeys:five, @"y", nagetiveTwo, @"z", nil];
+	} else if ([[sender currentTitle] isEqualToString:@"Test4"]) {
+		self.variableValues = [NSDictionary dictionaryWithObjectsAndKeys:zero, @"z", nil];
 	}
 	self.displayVariableValues.text = [self displayedVariables:variableUsedSet variablesInDictionary:self.variableValues];
 }
