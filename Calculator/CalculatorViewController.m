@@ -51,11 +51,6 @@
 }
 
 
-- (IBAction)variablePressed:(UIButton *)sender {
-	self.display.text = [sender currentTitle];
-	[self.brain pushOperand:self.display.text];
-}
-
 /* When enter key is pressed, push the operand on the screen to the stack.*/
 - (IBAction)enterPressed {
 	if ([self.display.text doubleValue]) [self.brain pushOperand:self.display.text]; 	
@@ -97,6 +92,14 @@ And the stack in the brain should also be reset(done in model)*/
 	for (NSString *var in aSet) //not sure if this can deal with the condition when aSet is nil
 		if ([aDictionary objectForKey:var]) [displayed appendFormat:@"%@ = %@    ", var, [aDictionary objectForKey:var]];	
 	return [displayed copy];
+}
+
+
+- (IBAction)variablePressed:(UIButton *)sender {
+	self.display.text = [sender currentTitle];
+	[self.brain pushOperand:self.display.text];
+	NSSet *variableUsedSet = [CalculatorBrain variablesUsedInProgram:self.brain.program];
+	self.displayVariableValues.text = [self displayedVariables:variableUsedSet variablesInDictionary:self.variableValues];
 }
 
 

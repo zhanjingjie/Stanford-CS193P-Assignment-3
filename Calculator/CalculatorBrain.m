@@ -139,8 +139,9 @@
 		id operand = [stack objectAtIndex:index];
 		if ((![operand isKindOfClass:[NSNumber class]]) && (![CalculatorBrain isOperation:operand])) {
 			NSNumber *value = [NSNumber numberWithDouble:0];
-			if ([variableValues objectForKey:operand]) 
+			if ([variableValues objectForKey:(NSString *)operand]) {//you have to cast the operand the same type as the key.
 				value = [variableValues objectForKey:operand];
+			}
 			[stack replaceObjectAtIndex:index withObject:value];
 		}
 	}
