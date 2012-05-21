@@ -12,13 +12,11 @@
 
 @interface CalculatorBrain()
 @property (nonatomic, strong) NSMutableArray *programStack;
-@property (nonatomic) NSUInteger *operationCount;
 @end
 
 
 @implementation CalculatorBrain
 @synthesize programStack = _programStack;
-@synthesize operationCount = _operationCount;
 
 // Getter
 ///////////////////////////////////////////////

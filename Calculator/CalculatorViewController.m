@@ -19,9 +19,11 @@
 
 
 @implementation CalculatorViewController
+
 @synthesize display = _display;
 @synthesize displayEquation = _displayEquation;
 @synthesize displayVariableValues = _displayVariableValues;
+
 @synthesize userIsInTheMiddleOfEnteringANumber = _userIsInTheMiddleOfEnteringANumber;
 @synthesize brain = _brain;
 @synthesize variableValues = _variableValues;//the dictionary to hold the value of variables.
@@ -34,7 +36,7 @@
 	return _brain;
 }
 
-/* Updating the two display places when a digit is pressed.*/
+/* Updating display.*/
 - (IBAction)digitPressed:(UIButton *)sender {
 	NSString *digit = [sender currentTitle];
 	
@@ -51,14 +53,14 @@
 }
 
 
-/* When enter key is pressed, push the operand on the screen to the stack.*/
+/* Updating displayEquation.*/
 - (IBAction)enterPressed {
 	if ([self.display.text doubleValue]) [self.brain pushOperand:self.display.text]; 	
 	self.userIsInTheMiddleOfEnteringANumber = NO;
 	self.displayEquation.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
 }
 
-/* Perform the operation and update the display and displayEquation.*/
+/* Updating display and displayEquation.*/
 - (IBAction)operationPressed:(UIButton *)sender {
 	if (self.userIsInTheMiddleOfEnteringANumber) {
 		[self enterPressed];
@@ -71,20 +73,21 @@
 	self.displayEquation.text = [CalculatorBrain descriptionOfProgram:self.brain.program];
 }
 
-/*If C is pressed, then two display and userIsInTheMiddleOfEnteringANumber should be reset initial state(done in controller)
-And the stack in the brain should also be reset(done in model)*/
+
+/* Updating display, displayEquation, displayVariable.
+ * Also updating fields userIsInTheMiddleOfEnteringANumber, and variableValues.
+ */
 - (IBAction)clearPressed {
 	[self.brain clearOperation];
 	self.display.text = [NSString stringWithFormat:@"%d", 0];
 	self.displayEquation.text = [NSString stringWithFormat:@"%s", ""];
+	self.displayVariableValues = [NSString stringWithFormat:@"%s", ""];
+	self.variableValues = nil;
 	self.userIsInTheMiddleOfEnteringANumber = NO;
 }
 
 
-/* Maybe have problem dealing with nil value.
- * aSet, aDictionary can be nil. aSet cannot be empty. aDictionary cannot be empty too.
- * Every variable inside the aSet may not have the corresponding value in aDictionary.
- */
+
 - (NSString *)displayedVariables:(NSSet *)aSet
 		   variablesInDictionary:(NSDictionary *) aDictionary
 {
@@ -98,6 +101,7 @@ And the stack in the brain should also be reset(done in model)*/
 }
 
 
+/* Updating display and displayVariableValues.*/
 - (IBAction)variablePressed:(UIButton *)sender {
 	self.display.text = [sender currentTitle];
 	[self.brain pushOperand:self.display.text];
@@ -106,6 +110,7 @@ And the stack in the brain should also be reset(done in model)*/
 }
 
 
+/* Updating displayVariableValues.*/
 - (IBAction)testPressed:(UIButton *)sender {
 	NSSet *variableUsedSet = [CalculatorBrain variablesUsedInProgram:self.brain.program];
 	NSNumber *zero = [NSNumber numberWithDouble:0];
