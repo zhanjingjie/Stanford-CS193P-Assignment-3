@@ -124,4 +124,13 @@ And the stack in the brain should also be reset(done in model)*/
 	self.displayVariableValues.text = [self displayedVariables:variableUsedSet variablesInDictionary:self.variableValues];
 }
 
+
+- (IBAction)undoPressed {
+	if (self.userIsInTheMiddleOfEnteringANumber) {
+		
+	} else {
+		
+	}
+}
+
 @end
