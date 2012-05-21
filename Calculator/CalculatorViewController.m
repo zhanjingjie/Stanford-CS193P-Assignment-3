@@ -95,16 +95,15 @@ And the stack in the brain should also be reset(done in model)*/
 {
 	NSMutableString *displayed = [@"" mutableCopy];
 	for (NSString *var in aSet) //not sure if this can deal with the condition when aSet is nil
-		if ([aDictionary objectForKey:var]) [displayed appendFormat:@"%@ = %@ ", var, [aDictionary objectForKey:var]];	
+		if ([aDictionary objectForKey:var]) [displayed appendFormat:@"%@ = %@    ", var, [aDictionary objectForKey:var]];	
 	return [displayed copy];
 }
 
 
 - (IBAction)testPressed:(UIButton *)sender {
-	//NSArray *variableNames = [NSArray arrayWithObjects:@"x", @"y", @"z", nil];
+	NSArray *variableNames = [NSArray arrayWithObjects:@"x", @"y", @"z", nil];
 	NSSet *variableUsedSet = [CalculatorBrain variablesUsedInProgram:self.brain.program];
-	NSLog(@"Inside the used variable set: %@", variableUsedSet);
-	/*NSArray *testValues;
+	NSArray *testValues;
 								  
 	if ([[sender currentTitle] isEqualToString:@"Test1"]) {
 		self.variableValues = nil;
@@ -116,10 +115,9 @@ And the stack in the brain should also be reset(done in model)*/
 		} else if ([[sender currentTitle] isEqualToString:@"Test4"]) {
 			testValues = [NSArray arrayWithObjects: [NSNumber numberWithDouble:7], [NSNumber numberWithDouble:8], [NSNumber numberWithDouble:9], nil];
 		}
-		self.variableValues = [self.variableValues initWithObjects:testValues forKeys:variableNames];
-	}*/
-	//self.displayVariableValues.text = [self displayedVariables:variableUsedSet variablesInDictionary:self.variableValues];
+		self.variableValues = [NSDictionary dictionaryWithObjects:testValues forKeys:variableNames];
+	}
+	self.displayVariableValues.text = [self displayedVariables:variableUsedSet variablesInDictionary:self.variableValues];
 }
-
 
 @end
