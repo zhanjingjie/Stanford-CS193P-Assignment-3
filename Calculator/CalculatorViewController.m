@@ -37,6 +37,20 @@
 }
 
 
+/* place from top to bottom: equation, result, variable.*/
+- (void)updateCenter:(NSString *)displayText
+			  placeToDisplay: (NSString *) place
+{
+	if ([place isEqualToString:@"equation"]) {
+		
+	} else if ([place isEqualToString:@"result"]) {
+		
+	} else if ([place isEqualToString:@"variable"]) {
+		
+	}
+}
+
+
 /* Updating display.*/
 - (IBAction)digitPressed:(UIButton *)sender {
 	NSString *digit = [sender currentTitle];
@@ -132,7 +146,11 @@
 /* Updating display, displayEquations, displayVariableValues.*/
 - (IBAction)undoPressed {
 	if (self.userIsInTheMiddleOfEnteringANumber) {
-		
+		if (self.display.text) {
+			self.display.text = [self.display.text substringToIndex:[self.display.text length] - 1];
+		} else {
+			self.userIsInTheMiddleOfEnteringANumber = NO;
+		}
 	} else {
 		
 	}
