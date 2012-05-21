@@ -86,19 +86,38 @@ And the stack in the brain should also be reset(done in model)*/
 }
 
 
+/* Maybe have problem dealing with nil value.
+ * aSet, aDictionary can be nil. aSet cannot be empty. aDictionary cannot be empty too.
+ * Every variable inside the aSet may not have the corresponding value in aDictionary.
+ */
+- (NSString *)displayedVariables:(NSSet *)aSet
+		   variablesInDictionary:(NSDictionary *) aDictionary
+{
+	NSMutableString *displayed = [@"" mutableCopy];
+	for (NSString *var in aSet) //not sure if this can deal with the condition when aSet is nil
+		if ([aDictionary objectForKey:var]) [displayed appendFormat:@"%@ = %@", var, [aDictionary objectForKey:var]];	
+	return [displayed copy];
+}
+
+
 - (IBAction)testPressed:(UIButton *)sender {
 	NSArray *variableNames = [NSArray arrayWithObjects:@"x", @"y", @"z", nil];
+	NSSet *variableUsedSet = [CalculatorBrain variablesUsedInProgram:self.brain.program];
+	NSArray *testValues;
 								  
 	if ([[sender currentTitle] isEqualToString:@"Test1"]) {
 		self.variableValues = nil;
-		self.displayVariableValues.text = @"x = 0, y = 0, z = 0";
-	} else if ([[sender currentTitle] isEqualToString:@"Test2"]) {
-		/*NSArray *test2 = [NSArray arrayWithObjects:
-						  [NSNumber numberWithDouble:1],
-						  [NSNumber numberWithDouble:2], 
-						  [NSNumber numberWithDouble:3], nil];
-		self.variableValues = [self.variableValues initWithObjects:test2 forKeys:variableNames];*/
+	} else {
+		if ([[sender currentTitle] isEqualToString:@"Test2"]) {
+			testValues = [NSArray arrayWithObjects: [NSNumber numberWithDouble:1], [NSNumber numberWithDouble:2], [NSNumber numberWithDouble:3], nil];
+		} else if ([[sender currentTitle] isEqualToString:@"Test3"]) {
+			testValues = [NSArray arrayWithObjects: [NSNumber numberWithDouble:4], [NSNumber numberWithDouble:5], [NSNumber numberWithDouble:6], nil];
+		} else if ([[sender currentTitle] isEqualToString:@"Test4"]) {
+			testValues = [NSArray arrayWithObjects: [NSNumber numberWithDouble:7], [NSNumber numberWithDouble:8], [NSNumber numberWithDouble:9], nil];
+		}
+		self.variableValues = [self.variableValues initWithObjects:testValues forKeys:variableNames];
 	}
+	self.displayVariableValues.text = [self displayedVariables:variableUsedSet variablesInDictionary:self.variableValues];
 }
 
 

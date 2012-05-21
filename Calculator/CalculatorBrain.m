@@ -160,7 +160,7 @@
 			}
 		}
 	}
-	return [variableSet copy];//use a copy of the variableSet
+	return [variableSet copy];//if variableSet is nil, I suppose this will also return nil
 }
 
 
