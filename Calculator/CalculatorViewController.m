@@ -155,23 +155,14 @@
 	[self updateCenter:@"" placeToUpdate:@"variable"];
 }
 
+
 /* Updating display, displayEquations, displayVariableValues.*/
 - (IBAction)undoPressed {
 	if (self.userIsInTheMiddleOfEnteringANumber) {//Not sure what will happen if only one character is left
 		[self updateCenter:[self.display.text substringToIndex:[self.display.text length] - 1] placeToUpdate:@"result"];
 	} else {
 		[self updateCenter:@"" placeToUpdate:@"result"];
-	}
-	
-	// Delete last digit in display, if in the middle of entering a number
-	// If display is deleted till nil, then it must not be in the middle of entering a number (update field)
-	// Handle this in updateCenter, if it's going to be nil, then call itself (like a recursion)
-	
-	// Delete top thing on the stack, if not in the middle of entering a number
-	// Call model to delete the top thing on stack (in update center)
-	// Then call descriptionOfProgram, runProgram
-	// And also need to update the variable field, because maybe you deleted a variable
-	// Call itself to update variable field
+	}	
 }
 
 @end

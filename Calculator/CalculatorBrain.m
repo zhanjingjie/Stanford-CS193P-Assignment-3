@@ -131,6 +131,9 @@
 }
 
 
+//Deal with error condition, show error messages on display field.
+//sqrt a negative number, not enough operand, divide by zero
+
 + (double)runProgram:(id)program
  usingVariableValues:(NSDictionary *)variableValues;
 {
