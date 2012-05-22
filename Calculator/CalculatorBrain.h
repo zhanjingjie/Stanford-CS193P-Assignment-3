@@ -14,14 +14,15 @@
 
 - (void) pushOperand:(NSString *)operand;
 - (void) clearOperation;
+- (void)popOneStack;
 
 
 + (double)runProgram:(id)program
   usingVariableValues:(NSDictionary *)variableValues;
 + (NSSet *)variablesUsedInProgram:(id)program;
 + (BOOL) isOperation:(NSString *)operation;
-
 + (NSString *)descriptionOfProgram:(id)program;
+
 
 
 @end

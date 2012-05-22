@@ -37,6 +37,12 @@
 
 ///////////////////////////////////////////////
 
+/* Just remove it, for undo button.*/
+- (void)popOneStack
+{
+	if([self.programStack count]) [self.programStack removeLastObject];
+}
+
 
 - (void) pushOperand:(NSString *)operand 
 {
