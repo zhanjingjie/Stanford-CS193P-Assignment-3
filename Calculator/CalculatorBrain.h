@@ -17,7 +17,7 @@
 - (void)popOneStack;
 
 
-+ (double)runProgram:(id)program
++ (id)runProgram:(id)program
   usingVariableValues:(NSDictionary *)variableValues;
 + (NSSet *)variablesUsedInProgram:(id)program;
 + (BOOL) isOperation:(NSString *)operation;

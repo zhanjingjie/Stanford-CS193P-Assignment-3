@@ -92,37 +92,66 @@
 
 
 
-/* No change in this method.
- */
 + (double) popOperandOffStack:(NSMutableArray *)stack
 {
-	double result = 0;
-	
+	/*double result;
 	id topOfStack = [stack lastObject];
-	if (topOfStack) [stack removeLastObject];
+	if (topOfStack) {
+		[stack removeLastObject];
+	} else {
+		result = INT_MAX; //@"Error: Insufficient operands.";
+	}*/
+	
+	double result;
+	id topOfStack = [stack lastObject];
+	if ([stack count]) {
+		[stack removeLastObject];
+	} else {
+		result = INT_MAX;
+	}
+	
 	
 	if ([topOfStack isKindOfClass:[NSNumber class]]) {
 		result = [topOfStack doubleValue];
 	} else if ([topOfStack isKindOfClass:[NSString class]]) {
 		NSString *operation = topOfStack;
-		if ([operation isEqualToString:@"+"]) {
-			result = [self popOperandOffStack:stack] + [self popOperandOffStack:stack];
-		} else if ([@"*" isEqualToString:operation]) {
-			result = [self popOperandOffStack:stack] * [self popOperandOffStack:stack];
-		} else if ([operation isEqualToString:@"-"]) {
-			double subtrahend = [self popOperandOffStack:stack];
-			result = [self popOperandOffStack:stack] - subtrahend;
-		} else if ([operation isEqualToString:@"/"]) {
-			double divisor = [self popOperandOffStack:stack];
-			if (divisor) result = [self popOperandOffStack:stack] / divisor;
-		} else if ([operation isEqualToString:@"sin"]) {//sin function
-			result = sin([self popOperandOffStack:stack]);
-		} else if ([operation isEqualToString:@"cos"]) {//cos function
-			result = cos([self popOperandOffStack:stack]);
-		} else if ([operation isEqualToString:@"tan"]) {//tan function
-			result = tan([self popOperandOffStack:stack]);
-		} else if ([operation isEqualToString:@"sqrt"]) {//sqrt function
-			result = sqrt([self popOperandOffStack:stack]);
+		if ([CalculatorBrain isTwoOperandOperation:operation]) {
+			double firstOperand = [self popOperandOffStack:stack];
+			double secondOperand = [self popOperandOffStack:stack];
+			
+			if (firstOperand >= (INT_MAX - 2)) return firstOperand;
+			if (secondOperand >= (INT_MAX - 2)) return secondOperand;
+			
+			if ([operation isEqualToString:@"+"]) {
+				result = firstOperand + secondOperand;
+			} else if ([@"*" isEqualToString:operation]) {
+				result = firstOperand * secondOperand;
+			} else if ([operation isEqualToString:@"-"]) {
+				result = secondOperand - firstOperand;
+			} else if ([operation isEqualToString:@"/"]) {
+				if (firstOperand) {
+					result = secondOperand / firstOperand;
+				} else {
+					result = INT_MAX - 1; //@"Error: Divided by zero.";
+				}
+			} 
+		} else if ([CalculatorBrain isOneOperandOperation:operation]) {
+			double singleOperand = [self popOperandOffStack:stack];
+			if (singleOperand >= (INT_MAX - 2)) return singleOperand;
+			
+			if ([operation isEqualToString:@"sin"]) {
+				result = sin(singleOperand);
+			} else if ([operation isEqualToString:@"cos"]) {
+				result = cos(singleOperand);
+			} else if ([operation isEqualToString:@"tan"]) {
+				result = tan(singleOperand);
+			} else if ([operation isEqualToString:@"sqrt"]) {
+				if (singleOperand < 0) {
+					result = INT_MAX - 2; //@"Error: Square root a negative number.";
+				} else {
+					result = sqrt(singleOperand);
+				}
+			} 
 		} else if ([operation isEqualToString:@"Pi"]) {//Pi function
 			result = M_PI;
 		}
@@ -134,7 +163,7 @@
 //Deal with error condition, show error messages on display field.
 //sqrt a negative number, not enough operand, divide by zero
 
-+ (double)runProgram:(id)program
++ (id)runProgram:(id)program
  usingVariableValues:(NSDictionary *)variableValues;
 {
 	NSMutableArray *stack;
@@ -152,7 +181,11 @@
 			[stack replaceObjectAtIndex:index withObject:value];
 		}
 	}
-	return [self popOperandOffStack:stack];
+	double result = [self popOperandOffStack:stack];
+	if (result == INT_MAX) return @"Error: Insufficient operands.";
+	if (result == INT_MAX - 1) return @"Error: Divided by zero.";
+	if (result == INT_MAX - 2) return @"Error: Square root a negative number.";
+	return [NSNumber numberWithDouble:result];
 }
 
 

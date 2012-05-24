@@ -65,9 +65,9 @@
 			
 			[self updateCenter:@"" placeToUpdate:@"variable"];
 			[self updateCenter:[CalculatorBrain descriptionOfProgram:self.brain.program] placeToUpdate:@"equation"];
-			double result = [CalculatorBrain runProgram:self.brain.program
+			id result = [CalculatorBrain runProgram:self.brain.program
 									usingVariableValues:self.variableValues];
-			[self updateCenter:[NSString stringWithFormat:@"%g", result] placeToUpdate:@"result"];
+			[self updateCenter:[NSString stringWithFormat:@"%@", result] placeToUpdate:@"result"];
 		}
 	} else if ([place isEqualToString:@"variable"]) {// Variable will always update itself
 		NSSet *variableUsedSet = [CalculatorBrain variablesUsedInProgram:self.brain.program];
@@ -94,7 +94,8 @@
 
 /* Updating displayEquation.*/
 - (IBAction)enterPressed {
-	if ([self.display.text doubleValue]) [self.brain pushOperand:self.display.text]; 	
+	if ([self.display.text doubleValue] || [self.display.text isEqualToString:@"0"]) 
+		[self.brain pushOperand:self.display.text]; 	
 	self.userIsInTheMiddleOfEnteringANumber = NO;
 	[self updateCenter:[CalculatorBrain descriptionOfProgram:self.brain.program] placeToUpdate:@"equation"];	
 }
@@ -106,11 +107,13 @@
 	}
 	NSString *operation = [sender currentTitle];
 	[self.brain pushOperand:operation];
-	double result = [CalculatorBrain runProgram:self.brain.program
+	id result = [CalculatorBrain runProgram:self.brain.program
 							 usingVariableValues:self.variableValues];
-	[self updateCenter:[NSString stringWithFormat:@"%g", result] placeToUpdate:@"result"];	
+	[self updateCenter:[NSString stringWithFormat:@"%@", result] placeToUpdate:@"result"];	
 	[self updateCenter:[CalculatorBrain descriptionOfProgram:self.brain.program] placeToUpdate:@"equation"];
 }
+
+
 
 
 /* Updating display, displayEquation, displayVariableValues.
@@ -124,7 +127,6 @@
 	self.variableValues = nil;
 	self.userIsInTheMiddleOfEnteringANumber = NO;
 }
-
 
 
 
