@@ -216,15 +216,40 @@
 		NSString *operationOrVar = topOfStack;
 		if (![self isOperation:operationOrVar] || [self isNoOperandOperation:operationOrVar]) {
 			description = operationOrVar;
-		} else if ([self isOneOperandOperation:operationOrVar]) {
+		} else if ([self isOneOperandOperation:operationOrVar]) {// Don't need to suppress parenthesis here
 			description = [NSString stringWithFormat:@"%@(%@)",operationOrVar, [self descriptionOfTopOfStack:stack]];
-		} else if ([self isTwoOperandOperation:operationOrVar]) {
+		} else if ([self isTwoOperandOperation:operationOrVar]) { 
 			NSString *secondOperand = [self descriptionOfTopOfStack:stack];
 			description = [NSString stringWithFormat:@"(%@ %@ %@)", [self descriptionOfTopOfStack:stack], operationOrVar, secondOperand];
 		}
 	}
 	return description;
 }
+
+
+
+// Supress parenthesis, only when a two-operand operation is pressed
+// Always supress the outermost parenthesis
+// Supress inner parenthesis based on precedence (compare this precedence and the next one)
+// If precedence is smaller, then need parenthesis. Else, suppress them (including same precedence)
+// For same precedence, there are some exceptions. eg. 5 - (3 + 4) is not equal to 5 - 3 + 4
+
+// + - same precedence
+// * / same precedence
+// So any combination after - or /, should keep its parenthesis
+
++ (NSString *)supressParenthesis:(NSString *)description
+{
+	// Supress the outter parenthesis
+	if ([description characterAtIndex:0] == '(') 
+		description = [description substringWithRange:NSMakeRange(1, [description length] - 2)];
+	
+	
+	
+	
+	return description;
+}
+
 
 
 + (NSString *)descriptionOfProgram:(id)program
@@ -236,10 +261,11 @@
 	}
 	
 	while ([stack count]) {
+		NSString *suppressedString = [self supressParenthesis:[self descriptionOfTopOfStack:stack]];
 		if (!descriptions) {
-			descriptions = [[self descriptionOfTopOfStack:stack] mutableCopy];
+			descriptions = [suppressedString mutableCopy];
 		} else {
-			[descriptions appendString:[self descriptionOfTopOfStack:stack]];
+			[descriptions appendString:suppressedString];
 		}
 		if ([stack count]) [descriptions appendString:@", "];
 	}
