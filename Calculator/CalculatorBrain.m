@@ -94,14 +94,6 @@
 
 + (double) popOperandOffStack:(NSMutableArray *)stack
 {
-	/*double result;
-	id topOfStack = [stack lastObject];
-	if (topOfStack) {
-		[stack removeLastObject];
-	} else {
-		result = INT_MAX; //@"Error: Insufficient operands.";
-	}*/
-	
 	double result;
 	id topOfStack = [stack lastObject];
 	if ([stack count]) {
@@ -237,16 +229,41 @@
 // + - same precedence
 // * / same precedence
 // So any combination after - or /, should keep its parenthesis
+// Maybe I can do it with algebra, + 1, - 2, * 3, / 4
+
+// May need a helper function, suppress the parenthesis of the outer most operation.
+
+// Regular expression method fails, it might work but it's way more complicated than it should be.
 
 + (NSString *)supressParenthesis:(NSString *)description
 {
-	// Supress the outter parenthesis
-	if ([description characterAtIndex:0] == '(') 
-		description = [description substringWithRange:NSMakeRange(1, [description length] - 2)];
+	//description = [description stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"()"]];
 	
 	
+	/*NSRegularExpression *regex2 = [NSRegularExpression regularExpressionWithPattern:@"\\((.*) (\\+|\\-|\\*|\\/) (.*)\\)" 
+																		   options:NSRegularExpressionCaseInsensitive 
+																			 error:nil];
+	NSString *temp = @"((3 + 5) * ((5 / 3) * 5))";
+	NSUInteger m = [regex2 numberOfMatchesInString:temp 
+										  options:0 
+											range:NSMakeRange(0, [temp length])]; 
+
+	NSArray *matchingArray = [regex2 matchesInString:temp options:0 range:NSMakeRange(0, [temp length])];
+	NSTextCheckingResult *rangeInArray = [matchingArray objectAtIndex:0];
 	
+	NSLog(@"Number of objects in the array: %d", [matchingArray count]);
 	
+	NSRange range1 = [rangeInArray rangeAtIndex:1];
+	NSRange range2 = [rangeInArray rangeAtIndex:2];
+	NSRange range3 = [rangeInArray rangeAtIndex:3];
+	
+	NSLog(@"Number of matches: %d", m);
+	NSLog(@"Matching array is: %@", matchingArray);
+	NSLog(@"First Ooerator starts at location: %d, length is %d", range1.location, range1.length);
+	NSLog(@"Second Ooerator starts at location: %d, length is %d", range2.location, range2.length);
+	NSLog(@"Third Ooerator starts at location: %d, length is %d", range3.location, range3.length);*/
+
+
 	return description;
 }
 
