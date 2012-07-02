@@ -14,7 +14,7 @@
 
 - (void) pushOperand:(NSString *)operand;
 - (void) clearOperation;
-- (void)popOneStack;
+- (void) popOneStack;
 
 
 + (id)runProgram:(id)program
