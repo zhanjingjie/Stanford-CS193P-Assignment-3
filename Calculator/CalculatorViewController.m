@@ -8,6 +8,7 @@
 
 #import "CalculatorViewController.h"
 #import "CalculatorBrain.h"
+#import "GraphingViewController.h"
 
 @interface CalculatorViewController()
 @property (nonatomic) BOOL userIsInTheMiddleOfEnteringANumber;
@@ -27,6 +28,19 @@
 @synthesize userIsInTheMiddleOfEnteringANumber = _userIsInTheMiddleOfEnteringANumber;
 @synthesize brain = _brain;
 @synthesize variableValues = _variableValues;
+
+// Prepare for the graphing view controller
+// Set its program
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+	if ([segue.identifier isEqualToString:@"showGraph"]) {
+		[segue.destinationViewController setProgram:self.brain.program];
+	}
+}
+
+
+
 
 
 - (CalculatorBrain *) brain
@@ -139,7 +153,10 @@
 }
 
 
-/* Updating displayVariableValues.*/
+/* Updating displayVariableValues.
+   Don't need this method for graphing calculator.
+ */
+/*
 - (IBAction)testPressed:(UIButton *)sender {
 	NSNumber *zero = [NSNumber numberWithDouble:0];
 	NSNumber *five = [NSNumber numberWithDouble:5];
@@ -156,7 +173,7 @@
 	}
 	[self updateCenter:@"" placeToUpdate:@"variable"];
 }
-
+*/
 
 /* Updating display, displayEquations, displayVariableValues.*/
 - (IBAction)undoPressed {
@@ -166,5 +183,29 @@
 		[self updateCenter:@"" placeToUpdate:@"result"];
 	}	
 }
+
+
+- (IBAction)graphProgram 
+{
+	id graphingViewController = [self.splitViewController.viewControllers lastObject];
+	if ([graphingViewController isKindOfClass:[GraphingViewController class]]) {
+		((GraphingViewController *) graphingViewController).program = self.brain.program;
+	}
+}
+
+
+
+- (void)viewDidUnload {
+	[super viewDidUnload];
+}
+
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+	return YES;
+	//return (toInterfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+
 
 @end
